@@ -23,3 +23,4 @@ def initBridges(game_map):
                         break
                     
     return list_of_bridges
+
