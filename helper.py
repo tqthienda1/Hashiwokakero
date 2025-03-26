@@ -47,9 +47,9 @@ def numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges):
                 
                 
                 if neighbor_bridges:
-                    print(f"#({y}, {x}): {game_map[y][x]}")
-                    for bridge in neighbor_bridges:
-                        print(bridge, list_of_bridges[bridge - 1])
+                    # print(f"#({y}, {x}): {game_map[y][x]}")
+                    # for bridge in neighbor_bridges:
+                        # print(bridge, list_of_bridges[bridge - 1])
                     for subset in combinations(neighbor_bridges, game_map[y][x] + 1):
                         solver.add_clause([-x for x in subset])
                         
@@ -82,9 +82,30 @@ def getAnswer(solver, list_of_bridges, game_map):
     
     if solver.solve():
         pySatAnswer = solver.get_model()
-        print(pySatAnswer)
+        # print(pySatAnswer)
         list_of_true_bridges = list(filter(lambda i: i > 0, pySatAnswer))
         return list_of_true_bridges
         
-    print("vcl")
     return None
+
+def printAnswer(list_of_true_bridges, list_of_bridges, game_map):
+    
+    for num_bridge in list_of_true_bridges:
+        bridge = list_of_bridges[num_bridge - 1]
+        
+        if bridge.pos1[0] == bridge.pos2[0]:
+            for pos in range(bridge.pos1[1] + 1, bridge.pos2[1]):
+                if game_map[bridge.pos1[0]][pos] == 0:
+                    game_map[bridge.pos1[0]][pos] = '-'
+                elif game_map[bridge.pos1[0]][pos] == '-':
+                    game_map[bridge.pos1[0]][pos] = '='
+        elif bridge.pos1[1] == bridge.pos2[1]:
+            for pos in range(bridge.pos1[0] + 1, bridge.pos2[0]):
+                if game_map[pos][bridge.pos1[1]] == 0:
+                    game_map[pos][bridge.pos1[1]] = '|'
+                elif game_map[pos][bridge.pos1[1]] == '|':
+                    game_map[pos][bridge.pos1[1]] = '$'
+                    
+    game_map = [[str(item) for item in row] for row in game_map]
+    for line in game_map:
+        print(line)

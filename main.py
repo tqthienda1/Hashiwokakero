@@ -9,12 +9,13 @@ def main():
     
     bridge_flags = [False] * len(list_of_bridges)
     list_of_true_bridges = getAnswer(solver, list_of_bridges, game_map)
-    print(list_of_bridges)
-    print(list_of_true_bridges)
-    if list_of_bridges:
+    if list_of_true_bridges:
         for bridge in range(len(list_of_bridges)):
             if bridge + 1 in list_of_true_bridges:
                 print(list_of_bridges[bridge])
+                
+    printAnswer(list_of_true_bridges, list_of_bridges, game_map)
+    
     
 if __name__ == "__main__":
     main()
