@@ -7,7 +7,6 @@ def main():
     game_map = readInput("input.txt")
     list_of_bridges = initBridges(game_map)
     
-    bridge_flags = [False] * len(list_of_bridges)
     list_of_true_bridges = getAnswer(solver, list_of_bridges, game_map)
     if list_of_true_bridges:
         for bridge in range(len(list_of_bridges)):
