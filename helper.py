@@ -2,6 +2,7 @@ from bridge import *
 from pysat.solvers import Glucose3
 from pysat.card import CardEnc
 from itertools import combinations  
+from a_star import *
 
 def readInput(file_name):
     game_map = []
@@ -23,23 +24,17 @@ def isCrossing(bridgeA, bridgeB):
 
     return False
 
-def crossingConstraint(solver, list_of_bridges):
+def crossingConstraint(solver, list_of_bridges, a_star_solver):
     for bridgeA in range(len(list_of_bridges)):
         for bridgeB in range(bridgeA + 1, len(list_of_bridges)):
             if isCrossing(list_of_bridges[bridgeA], list_of_bridges[bridgeB]):
+                a_star_solver.append([-(bridgeA + 1), -(bridgeB + 1)])
+                a_star_solver.append([(bridgeA + 1), (bridgeB + 1)])
+                
                 solver.add_clause([-(bridgeA + 1), -(bridgeB + 1)])
                 solver.add_clause([(bridgeA + 1), (bridgeB + 1)])
                 
-        
-def weightListGen(neighbor_bridges, list_of_bridges):
-    weight_list = []
-    
-    for bridge in neighbor_bridges:
-        weight_list.append(list_of_bridges[bridge - 1].num_bridge)
-        
-    return weight_list
-        
-def numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges):
+def numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges, a_star_solver):
     for y in range(len(game_map)):
         for x in range(len(game_map)):
             if game_map[y][x] > 0:
@@ -51,9 +46,11 @@ def numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges):
                     # for bridge in neighbor_bridges:
                         # print(bridge, list_of_bridges[bridge - 1])
                     for subset in combinations(neighbor_bridges, game_map[y][x] + 1):
+                        a_star_solver.append([-x for x in subset])
                         solver.add_clause([-x for x in subset])
                         
                     for subset in combinations(neighbor_bridges, len(neighbor_bridges) - (game_map[y][x] - 1)):
+                        a_star_solver.append(list(subset))
                         solver.add_clause(list(subset))
                 
         
@@ -75,15 +72,28 @@ def initBridges(game_map):
                     
     return list_of_bridges
 
-def getAnswer(solver, list_of_bridges, game_map):
-    crossingConstraint(solver, list_of_bridges)
-    # oneBridgeTypeConstraint(solver, list_of_bridges)
-    numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges)
+def getAnswer(solver, list_of_bridges, game_map, choice):
+    a_star_solver = []
+    crossingConstraint(solver, list_of_bridges, a_star_solver)
+    numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges, a_star_solver)
     
     if solver.solve():
         pySatAnswer = solver.get_model()
         # print(pySatAnswer)
-        list_of_true_bridges = list(filter(lambda i: i > 0, pySatAnswer))
+        # print(AStar(a_star_solver, list_of_bridges))
+        # print(len(list_of_bridges))
+        # for clause in a_star_solver:
+        #     print(clause)
+        # print(len(a_star_solver))
+        AStarAnswer = AStar(a_star_solver, list_of_bridges)
+        list_of_true_bridges = []
+        if choice == "1": 
+            list_of_true_bridges = list(filter(lambda i: i > 0, pySatAnswer))
+            print("PySAT")
+        else:
+            list_of_true_bridges = list(filter(lambda i: i > 0, AStarAnswer))
+            print("A*")
+            
         return list_of_true_bridges
         
     return None
@@ -101,6 +111,8 @@ def printAnswer(list_of_true_bridges, list_of_bridges, game_map):
                     game_map[bridge.pos1[0]][pos] = '='
         elif bridge.pos1[1] == bridge.pos2[1]:
             for pos in range(bridge.pos1[0] + 1, bridge.pos2[0]):
+                if pos == 1 and bridge.pos1[1] == 1:
+                    print(num_bridge)
                 if game_map[pos][bridge.pos1[1]] == 0:
                     game_map[pos][bridge.pos1[1]] = '|'
                 elif game_map[pos][bridge.pos1[1]] == '|':
