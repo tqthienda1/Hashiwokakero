@@ -3,6 +3,7 @@ from pysat.solvers import Glucose3
 from pysat.card import CardEnc
 from itertools import combinations  
 from a_star import *
+from brute_force import *
 
 def readInput(file_name):
     game_map = []
@@ -76,7 +77,7 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
     a_star_solver = []
     crossingConstraint(solver, list_of_bridges, a_star_solver)
     numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges, a_star_solver)
-    
+
     if solver.solve():
         pySatAnswer = solver.get_model()
         # print(pySatAnswer)
@@ -85,15 +86,23 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
         # for clause in a_star_solver:
         #     print(clause)
         # print(len(a_star_solver))
+      
         AStarAnswer = AStar(a_star_solver, list_of_bridges)
+        BruteForceAnswer = brute_force(a_star_solver, list_of_bridges)
         list_of_true_bridges = []
         if choice == "1": 
             list_of_true_bridges = list(filter(lambda i: i > 0, pySatAnswer))
             print("PySAT")
-        else:
+        elif choice == "2":
             list_of_true_bridges = list(filter(lambda i: i > 0, AStarAnswer))
             print("A*")
-            
+        elif choice == "3":
+            if BruteForceAnswer is not None:
+                list_of_true_bridges = list(filter(lambda i: i > 0, BruteForceAnswer))
+            else:
+                list_of_true_bridges = []
+            print("BF")
+
         return list_of_true_bridges
         
     return None
