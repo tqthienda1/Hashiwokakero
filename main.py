@@ -4,12 +4,13 @@ from helper import *
 
 def main():
     solver = Glucose3()
-    game_map = readInput("input2.txt")
+    game_map = readInput("input.txt")
     list_of_bridges = initBridges(game_map)
     print("Solving CNF with:")
     print("1. PySAT")
     print("2. A Star")
     print("3. Brute Force")
+    print("4. Backtracking")
     choice = input("Enter your choice: ")
     
     list_of_true_bridges = getAnswer(solver, list_of_bridges, game_map, choice)

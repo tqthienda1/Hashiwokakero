@@ -4,6 +4,7 @@ from pysat.card import CardEnc
 from itertools import combinations  
 from a_star import *
 from brute_force import *
+from backtracking import *
 
 def readInput(file_name):
     game_map = []
@@ -89,6 +90,7 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
       
         AStarAnswer = AStar(a_star_solver, list_of_bridges)
         BruteForceAnswer = brute_force(a_star_solver, list_of_bridges)
+        BacktrackingAnswer = Backtracking(a_star_solver)
         list_of_true_bridges = []
         if choice == "1": 
             list_of_true_bridges = list(filter(lambda i: i > 0, pySatAnswer))
@@ -102,6 +104,12 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
             else:
                 list_of_true_bridges = []
             print("BF")
+        elif choice == "4":
+            if BacktrackingAnswer is not None:
+                list_of_true_bridges = list(filter(lambda i: i > 0, BacktrackingAnswer))
+            else:
+                list_of_true_bridges = []
+            print("Backtracking")
 
         return list_of_true_bridges
         
