@@ -35,18 +35,18 @@ def crossingConstraint(solver, list_of_bridges, a_star_solver):
                 
                 solver.add_clause([-(bridgeA + 1), -(bridgeB + 1)])
                 solver.add_clause([(bridgeA + 1), (bridgeB + 1)])
-                
+
+
 def numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges, a_star_solver):
     for y in range(len(game_map)):
         for x in range(len(game_map)):
             if game_map[y][x] > 0:
                 neighbor_bridges = [i + 1 for i, bridge in enumerate(list_of_bridges) if bridge.pos1 == (y, x) or bridge.pos2 == (y, x)]
                 
-                
                 if neighbor_bridges:
                     # print(f"#({y}, {x}): {game_map[y][x]}")
                     # for bridge in neighbor_bridges:
-                        # print(bridge, list_of_bridges[bridge - 1])
+                    #     print(bridge, list_of_bridges[bridge - 1])
                     for subset in combinations(neighbor_bridges, game_map[y][x] + 1):
                         a_star_solver.append([-x for x in subset])
                         solver.add_clause([-x for x in subset])
@@ -78,7 +78,7 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
     a_star_solver = []
     crossingConstraint(solver, list_of_bridges, a_star_solver)
     numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges, a_star_solver)
-
+    print(a_star_solver)
     if solver.solve():
         pySatAnswer = solver.get_model()
         # print(pySatAnswer)
@@ -101,6 +101,7 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
         elif choice == "3":
             if BruteForceAnswer is not None:
                 list_of_true_bridges = list(filter(lambda i: i > 0, BruteForceAnswer))
+                print(list_of_true_bridges)
             else:
                 list_of_true_bridges = []
             print("BF")
@@ -116,7 +117,6 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
     return None
 
 def printAnswer(list_of_true_bridges, list_of_bridges, game_map):
-    
     for num_bridge in list_of_true_bridges:
         bridge = list_of_bridges[num_bridge - 1]
         
