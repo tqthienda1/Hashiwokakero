@@ -15,6 +15,7 @@ def main():
     choice = input("Enter your choice: ")
     
     list_of_true_bridges = getAnswer(solver, list_of_bridges, game_map, choice)
+    
     # if list_of_true_bridges:
     #     for bridge in range(len(list_of_bridges)):
     #         if bridge + 1 in list_of_true_bridges:
@@ -25,6 +26,6 @@ def main():
     else:
         print("No solution")
     
-    
+
 if __name__ == "__main__":
     main()

@@ -44,7 +44,8 @@ def numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges, a_star
         for x in range(len(game_map)):
             if game_map[y][x] > 0:
                 neighbor_bridges = [i + 1 for i, bridge in enumerate(list_of_bridges) if bridge.pos1 == (y, x) or bridge.pos2 == (y, x)]
-                # print(neighbor_bridges)
+                
+                
                 if neighbor_bridges:
                     # print(f"#({y}, {x}): {game_map[y][x]}")
                     # for bridge in neighbor_bridges:
@@ -86,23 +87,15 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
     a_star_solver = []
     crossingConstraint(solver, list_of_bridges, a_star_solver)
     numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges, a_star_solver)
-    # constraint(solver, list_of_bridges, a_star_solver)
-    print(len(a_star_solver))
-    
-    # for clause in a_star_solver:
-    #     for lit in clause:
-    #         if list_of_bridges[abs(lit) - 1].pos1 == (4,7) or list_of_bridges[abs(lit) - 1].pos2 == (4, 7):
-    #             print(f"#{lit}: {list_of_bridges[abs(lit) - 1]}")
-    #             print(clause)
 
-    
-    
-    # print(pySatAnswer)
-    # print(AStar(a_star_solver, list_of_bridges))
-    # print(len(list_of_bridges))
-    # for clause in a_star_solver:
-    #     print(clause)
-    # print(len(a_star_solver))
+    if solver.solve():
+        pySatAnswer = solver.get_model()
+        # print(pySatAnswer)
+        # print(AStar(a_star_solver, list_of_bridges))
+        # print(len(list_of_bridges))
+        # for clause in a_star_solver:
+        #     print(clause)
+        # print(len(a_star_solver))
       
     list_of_true_bridges = []
     if choice == "1": 
@@ -144,7 +137,6 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
         
 
 def printAnswer(list_of_true_bridges, list_of_bridges, game_map):
-    
     for num_bridge in list_of_true_bridges:
         bridge = list_of_bridges[num_bridge - 1]
         
