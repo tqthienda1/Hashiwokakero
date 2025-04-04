@@ -24,7 +24,6 @@ def AStar(a_star_solver, list_of_bridges):
     
     while frontier:
         f, state, cur_var = heapq.heappop(frontier)
-        # print(state)
         if len(state) == len(list_of_bridges):
             if goalState(state, a_star_solver):
                 return state

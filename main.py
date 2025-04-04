@@ -18,11 +18,6 @@ def main():
     list_of_true_bridges = getAnswer(solver, list_of_bridges, game_map, choice)
     elapsed_time = time.time() - start_time
     
-    # if list_of_true_bridges:
-    #     for bridge in range(len(list_of_bridges)):
-    #         if bridge + 1 in list_of_true_bridges:
-    #             print(f"#{bridge}" ,list_of_bridges[bridge])
-    
     if list_of_true_bridges:
         printAnswer(list_of_true_bridges, list_of_bridges, game_map)
         print(f"Time(ms): {round(elapsed_time * 1000, 3)}")

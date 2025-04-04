@@ -34,10 +34,8 @@ def crossingConstraint(solver, list_of_bridges, a_star_solver):
     for bridgeA in range(len(list_of_bridges)):
         for bridgeB in range(bridgeA + 1, len(list_of_bridges)):
             if isCrossing(list_of_bridges[bridgeA], list_of_bridges[bridgeB]):
-                # a_star_solver.append([(bridgeA + 1), (bridgeB + 1)])
                 a_star_solver.append([-(bridgeA + 1), -(bridgeB + 1)])
                 
-                # solver.add_clause([(bridgeA + 1), (bridgeB + 1)])
                 solver.add_clause([-(bridgeA + 1), -(bridgeB + 1)])
                 
                 
@@ -49,10 +47,6 @@ def numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges, a_star
                 
                 
                 if neighbor_bridges:
-                    # print(f"#({y}, {x}): {game_map[y][x]}")
-                    # for bridge in neighbor_bridges:
-                        # print(bridge, list_of_bridges[bridge - 1])
-                    # if len(neighbor_bridges) > game_map[y][x]:
                     for subset in combinations(neighbor_bridges, len(neighbor_bridges) - game_map[y][x] + 1):
                         a_star_solver.append(list(subset))
                         solver.add_clause(list(subset))
@@ -61,12 +55,6 @@ def numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges, a_star
                         a_star_solver.append([-x for x in subset])
                         solver.add_clause([-x for x in subset])
 
-def constraint(solver, list_of_bridges, a_star_solver):
-    for numBridge in range(0, len(list_of_bridges), 2):
-        solver.add_clause([(numBridge + 1), -(numBridge + 2)])
-        a_star_solver.append([(numBridge + 1), -(numBridge + 2)])
-
-    
 def initBridges(game_map):
     list_of_bridges = []
     for y in range(len(game_map)):
@@ -89,26 +77,12 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
     a_star_solver = []
     crossingConstraint(solver, list_of_bridges, a_star_solver)
     numBridgeConnectToIslandConstraint(solver, game_map, list_of_bridges, a_star_solver)
-
-    if solver.solve():
-        pySatAnswer = solver.get_model()
-        # print(pySatAnswer)
-        # print(AStar(a_star_solver, list_of_bridges))
-        # print(len(list_of_bridges))
-        # for clause in a_star_solver:
-        #     print(clause)
-        # print(len(a_star_solver))
     
     list_of_true_bridges = []
     if choice == "1": 
         if solver.solve():
             pySatAnswer = solver.get_model()
-            print(pySatAnswer)
             list_of_true_bridges = list(filter(lambda i: i > 0, pySatAnswer))
-            
-            # for bridge in list_of_true_bridges:
-            #     print(f"#{bridge}")
-            #     print(list_of_bridges[bridge - 1])
         print("PySAT")
     elif choice == "2":
         AStarAnswer = AStar(a_star_solver, list_of_bridges)
@@ -135,7 +109,7 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
             list_of_true_bridges = []
         print("Backtracking")
 
-    return list_of_true_bridges     
+    return list_of_true_bridges   
         
 
 def printAnswer(list_of_true_bridges, list_of_bridges, game_map):
