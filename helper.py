@@ -6,6 +6,8 @@ from a_star import *
 from brute_force import *
 from collections import defaultdict
 from backtracking import *
+import time
+
 
 def readInput(file_name):
     game_map = []
@@ -96,7 +98,7 @@ def getAnswer(solver, list_of_bridges, game_map, choice):
         # for clause in a_star_solver:
         #     print(clause)
         # print(len(a_star_solver))
-      
+    
     list_of_true_bridges = []
     if choice == "1": 
         if solver.solve():
