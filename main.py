@@ -5,7 +5,8 @@ from helper import *
 
 def main():
     solver = Glucose3()
-    game_map = readInput("./inputs/input1.txt")
+    map_choice = input("Choose input (1-10):")
+    game_map = readInput(f"./inputs/input{map_choice}.txt")
     list_of_bridges = initBridges(game_map)
     print("Solving CNF with:")
     print("1. PySAT")
